@@ -2,32 +2,28 @@ name: CI
 
 on:
   push:
-    branches: ["main", "development"]
+    branches: [ development ]
   pull_request:
-    branches: ["main"]
+    branches: [ development ]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+
+      - name: Run ESLint
+        run: npx eslint .
 
       - name: Run tests
         run: npm test
-
-      - name: Build (if present)
-        run: npm run build --if-present
-
-      - name: Lint (if present)
-        run: npm run lint --if-present
