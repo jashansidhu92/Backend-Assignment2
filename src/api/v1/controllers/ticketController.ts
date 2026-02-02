@@ -7,6 +7,7 @@ import {
   updateTicket,
   deleteTicket,
 } from "../services/ticketService";
+import { calculateUrgency } from "../services/urgencyService";
 
 export function createTicketController(req: Request, res: Response) {
   const result = createTicket(req.body);
@@ -59,3 +60,21 @@ export function deleteTicketController(req: Request, res: Response) {
   return res.status(HTTP_STATUS.OK).json({ message: "Ticket deleted" });
 }
 
+export function getTicketUrgencyController(req: Request, res: Response) {
+  const id = Number(req.params.id);
+  const ticket = getTicketById(id);
+
+  if (!ticket) {
+    return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Ticket not found" });
+  }
+
+  const urgency = calculateUrgency(ticket);
+
+  return res.status(HTTP_STATUS.OK).json({
+    id: ticket.id,
+    priority: ticket.priority,
+    status: ticket.status,
+    urgencyScore: urgency.urgencyScore,
+    urgencyLevel: urgency.urgencyLevel,
+  });
+}
